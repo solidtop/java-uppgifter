@@ -29,22 +29,21 @@ public class PriceApp {
             printOptions();
             System.out.print("Välj: ");
             String input = scanner.nextLine();
-            InputResponse res = runOption(input, prices, scanner);
-
-            if (res.getStatus() == Status.END) {
-                System.out.println(res.getMessage());
-                break;
-            }
+            InputResponse res = selectOption(input);
 
             if (!res.getMessage().isEmpty()) {
                 System.out.println(res.getMessage());
+            }
+
+            if (res.getStatus() == Status.END) {
+                break;
             }
 
             triggerPrompt(scanner);
         }
     }
 
-    private InputResponse runOption(String input, List<Price> prices, Scanner scanner) {
+    private InputResponse selectOption(String input) {
         if (input.isEmpty()) {
             return new InputResponse(Status.ERROR, "Var god välj ett alternativ");
         }
@@ -53,7 +52,7 @@ public class PriceApp {
             return new InputResponse(Status.END, "Programmet avslutas");
         }
 
-        if (!input.equals("1") && prices.size() < 4) {
+        if (!(input.equals("1") || input.equals("5")) && prices.size() < 4) {
             return new InputResponse(Status.ERROR, "Det finns inte tillräckligt med priser att hantera");
         }
 
