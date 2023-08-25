@@ -1,7 +1,5 @@
 package org.example.labb1;
 
-import java.time.LocalDateTime;
-
 public class Price {
     private final int hourFrom;
     private final int hourTo;

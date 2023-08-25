@@ -2,12 +2,12 @@ package org.example.labb1;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
-import com.opencsv.exceptions.CsvException;
 import com.opencsv.exceptions.CsvValidationException;
 
-import java.io.*;
-import java.net.URL;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
+
 
 public class PriceApp {
 
