@@ -10,34 +10,40 @@ import java.net.URL;
 import java.util.*;
 
 public class PriceApp {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        ArrayList<Price> prices = new ArrayList<>();
-        prices.add(new Price(0, 1, 100));
-        prices.add(new Price(0, 1, 50));
-        prices.add(new Price(0, 1, 20));
-        prices.add(new Price(0, 1, 10));
-        prices.add(new Price(0, 1, 200));
 
-        while (true) {
+    public static void main(String[] args) {
+        PriceApp app = new PriceApp();
+        app.run();
+    }
+
+    private final Scanner scanner;
+    private final List<Price> prices;
+
+    public PriceApp() {
+        scanner = new Scanner(System.in);
+        prices = new ArrayList<>();
+    }
+
+    public void run() {
+        while(true) {
             printOptions();
             System.out.print("Välj: ");
             String input = scanner.nextLine();
             InputResponse res = runOption(input, prices, scanner);
-            if (res.getStatus() == Status.ERROR) {
-                System.out.println(res.getMessage());
-            } else if (res.getStatus() == Status.END) {
-                System.out.println(res.getMessage());
+
+            if (res.getStatus() == Status.END) {
                 break;
+            }
+
+            if (!res.getMessage().isEmpty()) {
+                System.out.println(res.getMessage());
             }
 
             triggerPrompt(scanner);
         }
-
-        scanner.close();
     }
 
-    static InputResponse runOption(String input, ArrayList<Price> prices, Scanner scanner) {
+    private InputResponse runOption(String input, List<Price> prices, Scanner scanner) {
         if (input.isEmpty()) {
             return new InputResponse(Status.ERROR, "Var god välj ett alternativ");
         }
@@ -60,8 +66,11 @@ public class PriceApp {
                         System.out.print("Pris för timmor " + hours + ":");
                         int price = scanner.nextInt();
                         prices.add(new Price(i, i + 1, price));
-                    } catch (InputMismatchException exception) {
-                        System.out.println("Var god skriv ett pris i hela ören");
+                    } catch (InputMismatchException e) {
+                        InputResponse res = new InputResponse(Status.ERROR, "Var god skriv ett pris i hela ören");
+                        System.out.println(res.getMessage());
+                        scanner.nextLine();
+                        i--;
                     }
                 }
                 scanner.nextLine();
@@ -120,6 +129,7 @@ public class PriceApp {
                         int price = Integer.parseInt(row[2]);
                         prices.add(new Price(hourFrom, hourTo, price));
                     }
+                    reader.close();
                 } catch (CsvValidationException | IOException e) {
                     e.printStackTrace();
                 } finally {
@@ -136,7 +146,7 @@ public class PriceApp {
         return new InputResponse(Status.SUCCESS);
     }
 
-    static void printOptions() {
+    private void printOptions() {
         System.out.println("Elpriser");
         System.out.println("========");
         System.out.println("1. Inmatning");
@@ -147,36 +157,36 @@ public class PriceApp {
         System.out.println("e. Avsluta");
     }
 
-    static void printHeader(String title) {
+    private void printHeader(String title) {
         System.out.println(Util.ANSI_GREEN + "------------------------------");
         System.out.println("       " + title + "       ");
         System.out.println("------------------------------" + Util.ANSI_RESET);
     }
 
-    static void printFooter() {
+    private void printFooter() {
         System.out.println(Util.ANSI_GREEN + "------------------------------" + Util.ANSI_RESET);
     }
 
-    static void printBreak() {
+    private void printBreak() {
         System.out.println("------------");
     }
 
-    static Price getLowestPrice(ArrayList<Price> prices) {
+    private Price getLowestPrice(List<Price> prices) {
         return prices.stream().min(Comparator.comparingInt(Price::getPrice)).orElseThrow(NoSuchElementException::new);
     }
 
-    static Price getHighestPrice(ArrayList<Price> prices) {
+    private Price getHighestPrice(List<Price> prices) {
         return prices.stream()
                 .max(Comparator.comparingInt(Price::getPrice))
                 .orElseThrow(NoSuchElementException::new);
     }
 
-    static Price getAveragePrice(ArrayList<Price> prices) {
+    private Price getAveragePrice(List<Price> prices) {
         int averagePrice = (int) prices.stream().mapToInt(Price::getPrice).average().orElse(0);
         return new Price(0, 23, averagePrice);
     }
 
-    static void triggerPrompt(Scanner scanner) {
+    private void triggerPrompt(Scanner scanner) {
         System.out.println(Util.ANSI_YELLOW + "Tryck på valfri knapp för att fortsätta" + Util.ANSI_RESET);
         scanner.nextLine();
     }
