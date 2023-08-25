@@ -8,6 +8,7 @@ public class InputResponse {
         this.status = status;
         message = "";
     }
+
     public InputResponse(Status status, String message) {
         this.status = status;
         this.message = message;
