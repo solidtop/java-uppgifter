@@ -32,6 +32,7 @@ public class PriceApp {
             InputResponse res = runOption(input, prices, scanner);
 
             if (res.getStatus() == Status.END) {
+                System.out.println(res.getMessage());
                 break;
             }
 
