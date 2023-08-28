@@ -28,18 +28,18 @@ public class Rectangle extends Shape {
     }
 
     @Override
-    public double getArea() {
+    public double calculateArea() {
         return width * height;
     }
 
     @Override
-    public double getPerimeter() {
+    public double calculatePerimeter() {
         return (width * 2) + (height * 2);
     }
 
     @Override
     public int compareTo(Shape o) {
-        return Double.compare(this.getArea(), o.getArea());
+        return Double.compare(calculateArea(), o.calculateArea());
     }
 
     @Override
@@ -47,7 +47,7 @@ public class Rectangle extends Shape {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Rectangle rectangle = (Rectangle) o;
-        return Double.compare(width, rectangle.width) == 0 && Double.compare(height, rectangle.height) == 0;
+        return Double.compare(width, rectangle.getWidth()) == 0 && Double.compare(height, rectangle.getHeight()) == 0;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class Rectangle extends Shape {
         return "Rectangle{" +
                 "width=" + width +
                 ", height=" + height +
-                ", area=" + getArea() +
+                ", area=" + calculateArea() +
                 '}';
     }
 }

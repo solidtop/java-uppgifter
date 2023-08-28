@@ -98,7 +98,7 @@ public class PriceApp {
 
             case "3" -> {
                 printHeader("Sortera");
-                prices.sort(Comparator.comparingInt(Price::getPrice));
+                prices.sort(null);
                 for (Price price : prices) {
                     System.out.println(price);
                     printBreak();
@@ -107,7 +107,7 @@ public class PriceApp {
 
             case "4" -> {
                 printHeader("Bästa Laddningstid (4h)");
-                prices.sort(Comparator.comparingInt(Price::getPrice));
+                prices.sort(null);
                 System.out.println("De 4 billigaste timmarna är mellan "
                         + prices.get(0).getHourFrom() + " och "
                         + prices.get(3).getHourTo());

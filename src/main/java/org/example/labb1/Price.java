@@ -1,6 +1,6 @@
 package org.example.labb1;
 
-public class Price {
+public class Price implements Comparable<Price> {
     private final int hourFrom;
     private final int hourTo;
     private final int price;
@@ -29,6 +29,11 @@ public class Price {
 
     public String getPriceString() {
         return price + " öre / kWh";
+    }
+
+    @Override
+    public int compareTo(Price o) {
+        return Integer.compare(price, o.getPrice());
     }
 
     @Override

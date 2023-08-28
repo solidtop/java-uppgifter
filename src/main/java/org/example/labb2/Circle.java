@@ -17,24 +17,24 @@ public class Circle extends Shape {
         this.diameter = diameter;
     }
 
-    public double getRadius() {
+    public double calculateRadius() {
         return diameter / 2;
     }
 
     @Override
-    public double getArea() {
-        double radius = getRadius();
+    public double calculateArea() {
+        double radius = calculateRadius();
         return Math.PI * radius * radius;
     }
 
     @Override
-    public double getPerimeter() {
+    public double calculatePerimeter() {
         return Math.PI * diameter;
     }
 
     @Override
     public int compareTo(Shape o) {
-        return Double.compare(this.getArea(), o.getArea());
+        return Double.compare(this.calculateArea(), o.calculateArea());
     }
 
     @Override
@@ -42,7 +42,7 @@ public class Circle extends Shape {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Circle circle = (Circle) o;
-        return Double.compare(diameter, circle.diameter) == 0;
+        return Double.compare(diameter, circle.getDiameter()) == 0;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class Circle extends Shape {
     public String toString() {
         return "Circle{" +
                 "diameter=" + diameter +
-                ", area=" + getArea() +
+                ", area=" + calculateArea() +
                 '}';
     }
 }

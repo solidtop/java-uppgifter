@@ -4,8 +4,8 @@ import java.util.Arrays;
 
 public abstract class Shape implements Comparable<Shape> {
 
-    public abstract double getArea();
-    public abstract double getPerimeter();
+    public abstract double calculateArea();
+    public abstract double calculatePerimeter();
     public static Shape newShape(Class<? extends Shape> shapeClass, Object... args) {
         try {
             Class<?>[] paramTypes = new Class<?>[args.length];
