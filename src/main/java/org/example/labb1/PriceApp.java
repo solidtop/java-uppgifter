@@ -57,86 +57,11 @@ public class PriceApp {
         }
 
         switch (input) {
-            case "1" -> {
-                printHeader("Inmatning");
-                System.out.println("Mata in elpriset (öre) per KWh för all timmar på dygnet");
-                for (int i = 0; i < 24; i++) {
-                    try {
-                        String hours = Util.formatHours(i, i + 1);
-                        System.out.print("Pris för timmor " + hours + ":");
-                        int price = scanner.nextInt();
-                        prices.add(new Price(i, i + 1, price));
-                    } catch (InputMismatchException e) {
-                        InputResponse res = new InputResponse(Status.ERROR, "Var god skriv ett pris i hela ören");
-                        System.out.println(res.getMessage());
-                        scanner.nextLine();
-                        i--;
-                    }
-                }
-                scanner.nextLine();
-            }
-
-            case "2" -> {
-                printHeader("Min, Max och Medel");
-                Price lowestPrice = getLowestPrice(prices);
-                Price highestPrice = getHighestPrice(prices);
-                Price averagePrice = getAveragePrice(prices);
-                printBreak();
-                System.out.println("Lägsta priset");
-                printBreak();
-                System.out.println(lowestPrice);
-                printBreak();
-                System.out.println("Högsta priset");
-                printBreak();
-                System.out.println(highestPrice);
-                printBreak();
-                System.out.println("Medel priset");
-                printBreak();
-                System.out.println(averagePrice);
-                printBreak();
-            }
-
-            case "3" -> {
-                printHeader("Sortera");
-                prices.sort(null);
-                for (Price price : prices) {
-                    System.out.println(price);
-                    printBreak();
-                }
-            }
-
-            case "4" -> {
-                printHeader("Bästa Laddningstid (4h)");
-                prices.sort(null);
-                System.out.println("De 4 billigaste timmarna är mellan "
-                        + prices.get(0).getHourFrom() + " och "
-                        + prices.get(3).getHourTo());
-                Price price = getAveragePrice(prices);
-                System.out.println("Medelpriset under dessa timmar är: " + price.getPriceString());
-            }
-
-            case "5" -> {
-                prices.clear();
-                try {
-                    CSVReader reader = new CSVReaderBuilder(new FileReader("src/main/resources/priser.csv"))
-                            .withSkipLines(1)
-                            .build();
-                    String[] row;
-
-                    while ((row = reader.readNext()) != null) {
-                        int hourFrom = Integer.parseInt(row[0]);
-                        int hourTo = Integer.parseInt(row[1]);
-                        int price = Integer.parseInt(row[2]);
-                        prices.add(new Price(hourFrom, hourTo, price));
-                    }
-                    reader.close();
-                } catch (CsvValidationException | IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    System.out.println("Priserna laddades framgångsrikt");
-                }
-            }
-
+            case "1" -> inputPrices();
+            case "2" -> calculateMinMaxAverage();
+            case "3" -> sortPrices();
+            case "4" -> calculateBestChargingTime();
+            case "5" -> loadPricesFromCSV();
             default -> {
                 return new InputResponse(Status.ERROR, input + " finns inte som alternativ");
             }
@@ -189,5 +114,92 @@ public class PriceApp {
     private void triggerPrompt(Scanner scanner) {
         System.out.println(Util.ANSI_YELLOW + "Tryck på valfri knapp för att fortsätta" + Util.ANSI_RESET);
         scanner.nextLine();
+    }
+
+    private void inputPrices() {
+        printHeader("Inmatning");
+        System.out.println("Mata in elpriset (öre) per KWh för alla timmar på dygnet");
+        for (int i = 0; i < 24; i++) {
+            try {
+                String hours = Util.formatHours(i, i + 1);
+                System.out.print("Pris för timmar " + hours + ":");
+                int price = scanner.nextInt();
+                prices.add(new Price(i, i + 1, price));
+            } catch (InputMismatchException e) {
+                InputResponse res = new InputResponse(Status.ERROR, "Var god skriv ett pris i hela ören");
+                System.out.println(res.getMessage());
+                scanner.nextLine();
+                i--;
+            }
+        }
+        scanner.nextLine();
+    }
+
+    private void calculateMinMaxAverage() {
+        printHeader("Min, Max och Medel");
+        Price lowestPrice = getLowestPrice(prices);
+        Price highestPrice = getHighestPrice(prices);
+        Price averagePrice = getAveragePrice(prices);
+
+        printBreak();
+        System.out.println("Lägsta priset");
+        printBreak();
+        System.out.println(lowestPrice);
+        printBreak();
+
+        System.out.println("Högsta priset");
+        printBreak();
+        System.out.println(highestPrice);
+        printBreak();
+
+        System.out.println("Medel priset");
+        printBreak();
+        System.out.println(averagePrice);
+        printBreak();
+    }
+
+    private void sortPrices() {
+        printHeader("Sortera");
+        prices.sort(null);
+        for (Price price : prices) {
+            System.out.println(price);
+            printBreak();
+        }
+    }
+
+    private void calculateBestChargingTime() {
+        printHeader("Bästa Laddningstid (4h)");
+        List<Price> cheapestPrices = prices.stream()
+                        .sorted()
+                        .limit(4)
+                        .toList();
+        System.out.println("De 4 billigaste timmarna på dygnet är föjande:");
+        cheapestPrices.forEach(price -> {
+            System.out.println(price);
+            printBreak();
+        });
+        Price price = getAveragePrice(cheapestPrices);
+        System.out.println("Medelpriset under dessa timmar är: " + price.getPriceString());
+    }
+
+    private void loadPricesFromCSV() {
+        prices.clear();
+        try {
+            CSVReader reader = new CSVReaderBuilder(new FileReader("src/main/resources/priser.csv"))
+                    .withSkipLines(1)
+                    .build();
+            String[] row;
+
+            while ((row = reader.readNext()) != null) {
+                int hourFrom = Integer.parseInt(row[0]);
+                int hourTo = Integer.parseInt(row[1]);
+                int price = Integer.parseInt(row[2]);
+                prices.add(new Price(hourFrom, hourTo, price));
+            }
+            reader.close();
+            System.out.println("Priserna laddades framgångsrikt");
+        } catch (CsvValidationException | IOException e) {
+            e.printStackTrace();
+        }
     }
 }
