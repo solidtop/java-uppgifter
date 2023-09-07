@@ -39,7 +39,7 @@ public class PriceApp {
                 break;
             }
 
-            triggerPrompt(scanner);
+            triggerPrompt();
         }
     }
 
@@ -111,7 +111,7 @@ public class PriceApp {
         return new Price(0, 23, averagePrice);
     }
 
-    private void triggerPrompt(Scanner scanner) {
+    private void triggerPrompt() {
         System.out.println(Util.ANSI_YELLOW + "Tryck på valfri knapp för att fortsätta" + Util.ANSI_RESET);
         scanner.nextLine();
     }
