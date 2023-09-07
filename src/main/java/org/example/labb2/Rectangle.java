@@ -2,11 +2,11 @@ package org.example.labb2;
 
 import java.util.Objects;
 
-public class Rectangle extends Shape {
-    private double width;
-    private double height;
+public class Rectangle extends Shape implements Comparable<Shape> {
+    private float width;
+    private float height;
 
-    public Rectangle(double width, double height) {
+    public Rectangle(float width, float height) {
         this.width = width;
         this.height = height;
     }
@@ -15,7 +15,7 @@ public class Rectangle extends Shape {
         return width;
     }
 
-    public void setWidth(double width) {
+    public void setWidth(float width) {
         this.width = width;
     }
 
@@ -23,23 +23,23 @@ public class Rectangle extends Shape {
         return height;
     }
 
-    public void setHeight(double height) {
+    public void setHeight(float height) {
         this.height = height;
     }
 
     @Override
-    public double calculateArea() {
+    public double getArea() {
         return width * height;
     }
 
     @Override
-    public double calculatePerimeter() {
+    public double getPerimeter() {
         return (width * 2) + (height * 2);
     }
 
     @Override
     public int compareTo(Shape o) {
-        return Double.compare(calculateArea(), o.calculateArea());
+        return Double.compare(getArea(), o.getArea());
     }
 
     @Override
@@ -47,7 +47,7 @@ public class Rectangle extends Shape {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Rectangle rectangle = (Rectangle) o;
-        return Double.compare(width, rectangle.getWidth()) == 0 && Double.compare(height, rectangle.getHeight()) == 0;
+        return Float.compare(width, rectangle.width) == 0 && Float.compare(height, rectangle.height) == 0;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class Rectangle extends Shape {
         return "Rectangle{" +
                 "width=" + width +
                 ", height=" + height +
-                ", area=" + calculateArea() +
+                ", area=" + getArea() +
                 '}';
     }
 }

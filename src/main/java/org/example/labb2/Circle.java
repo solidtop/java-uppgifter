@@ -2,39 +2,38 @@ package org.example.labb2;
 
 import java.util.Objects;
 
-public class Circle extends Shape {
-    private double diameter;
+public class Circle extends Shape implements Comparable<Shape> {
+    private float radius;
 
-    public Circle(double diameter) {
-        this.diameter = diameter;
+    public Circle(float radius) {
+        this.radius = radius;
     }
 
-    public double getDiameter() {
-        return diameter;
+    public float getRadius() {
+        return radius;
     }
 
-    public void setDiameter(double diameter) {
-        this.diameter = diameter;
+    public float getDiameter() {
+        return radius * 2;
     }
 
-    public double calculateRadius() {
-        return diameter / 2;
+    public void setRadius(float radius) {
+        this.radius = radius;
     }
 
     @Override
-    public double calculateArea() {
-        double radius = calculateRadius();
+    public double getArea() {
         return Math.PI * radius * radius;
     }
 
     @Override
-    public double calculatePerimeter() {
-        return Math.PI * diameter;
+    public double getPerimeter() {
+        return Math.PI * getDiameter();
     }
 
     @Override
     public int compareTo(Shape o) {
-        return Double.compare(this.calculateArea(), o.calculateArea());
+        return Double.compare(getArea(), o.getArea());
     }
 
     @Override
@@ -42,19 +41,20 @@ public class Circle extends Shape {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Circle circle = (Circle) o;
-        return Double.compare(diameter, circle.getDiameter()) == 0;
+        return Float.compare(radius, circle.radius) == 0;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(diameter);
+        return Objects.hash(radius);
     }
 
     @Override
     public String toString() {
         return "Circle{" +
-                "diameter=" + diameter +
-                ", area=" + calculateArea() +
+                "radius=" + radius +
+                ", diameter=" + getDiameter() +
+                ", area=" + getArea() +
                 '}';
     }
 }
