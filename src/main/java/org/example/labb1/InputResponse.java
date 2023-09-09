@@ -19,6 +19,6 @@ public class InputResponse {
     }
 
     public String getMessage() {
-        return Util.ANSI_RED + message + Util.ANSI_RESET;
+        return Utils.ANSI_RED + message + Utils.ANSI_RESET;
     }
 }

@@ -83,13 +83,13 @@ public class PriceApp {
     }
 
     private void printHeader(String title) {
-        System.out.println(Util.ANSI_GREEN + "------------------------------");
+        System.out.println(Utils.ANSI_GREEN + "------------------------------");
         System.out.println("       " + title + "       ");
-        System.out.println("------------------------------" + Util.ANSI_RESET);
+        System.out.println("------------------------------" + Utils.ANSI_RESET);
     }
 
     private void printFooter() {
-        System.out.println(Util.ANSI_GREEN + "------------------------------" + Util.ANSI_RESET);
+        System.out.println(Utils.ANSI_GREEN + "------------------------------" + Utils.ANSI_RESET);
     }
 
     private void printBreak() {
@@ -112,7 +112,7 @@ public class PriceApp {
     }
 
     private void triggerPrompt() {
-        System.out.println(Util.ANSI_YELLOW + "Tryck på valfri knapp för att fortsätta" + Util.ANSI_RESET);
+        System.out.println(Utils.ANSI_YELLOW + "Tryck på valfri knapp för att fortsätta" + Utils.ANSI_RESET);
         scanner.nextLine();
     }
 
@@ -121,7 +121,7 @@ public class PriceApp {
         System.out.println("Mata in elpriset (öre) per KWh för alla timmar på dygnet");
         for (int i = 0; i < 24; i++) {
             try {
-                String hours = Util.formatHours(i, i + 1);
+                String hours = Utils.formatHours(i, i + 1);
                 System.out.print("Pris för timmar " + hours + ":");
                 int price = scanner.nextInt();
                 prices.add(new Price(i, i + 1, price));
@@ -169,17 +169,24 @@ public class PriceApp {
 
     private void calculateBestChargingTime() {
         printHeader("Bästa Laddningstid (4h)");
-        List<Price> cheapestPrices = prices.stream()
-                        .sorted()
-                        .limit(4)
-                        .toList();
-        System.out.println("De 4 billigaste timmarna på dygnet är föjande:");
-        cheapestPrices.forEach(price -> {
-            System.out.println(price);
-            printBreak();
-        });
-        Price price = getAveragePrice(cheapestPrices);
-        System.out.println("Medelpriset under dessa timmar är: " + price.getPriceString());
+
+        int bestStartHour = 0;
+        int bestTotalPrice = 0;
+        for (int i = 0; i < prices.size() - 4; i++) {
+            int totalPrice = 0;
+            for (int j = 0; j < 4; j++) {
+                totalPrice += prices.get(i + j).getPrice();
+
+                if (totalPrice < bestTotalPrice || bestTotalPrice == 0) {
+                    bestTotalPrice = totalPrice;
+                    bestStartHour = i;
+                }
+            }
+        }
+
+        System.out.println("Bästa tiden att börja ladda är vid: " + Utils.formatHour(bestStartHour));
+        int averagePrice = bestTotalPrice / 4;
+        System.out.println("Medelpriset under dessa 4 timmar är: " + averagePrice + " öre");
     }
 
     private void loadPricesFromCSV() {

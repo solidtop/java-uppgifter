@@ -20,7 +20,7 @@ public class Price implements Comparable<Price> {
     }
 
     public String getHours() {
-        return Util.formatHours(hourFrom, hourTo);
+        return Utils.formatHours(hourFrom, hourTo);
     }
 
     public int getPrice() {
