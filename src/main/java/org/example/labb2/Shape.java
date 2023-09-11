@@ -2,10 +2,15 @@ package org.example.labb2;
 
 import java.util.Arrays;
 
-public abstract class Shape {
+public abstract class Shape implements Comparable<Shape> {
 
     public abstract double getArea();
     public abstract double getPerimeter();
+
+    @Override
+    public int compareTo(Shape o) {
+        return Double.compare(getArea(), o.getArea());
+    }
 
     public static Shape create(Class<? extends Shape> shapeClass, Object... args) {
         try {

@@ -2,7 +2,7 @@ package org.example.labb2;
 
 import java.util.Objects;
 
-public class Rectangle extends Shape implements Comparable<Shape> {
+public class Rectangle extends Shape {
     private float width;
     private float height;
 
@@ -35,11 +35,6 @@ public class Rectangle extends Shape implements Comparable<Shape> {
     @Override
     public double getPerimeter() {
         return (width * 2) + (height * 2);
-    }
-
-    @Override
-    public int compareTo(Shape o) {
-        return Double.compare(getArea(), o.getArea());
     }
 
     @Override
