@@ -11,7 +11,7 @@ public class Rectangle extends Shape implements Comparable<Shape> {
         this.height = height;
     }
 
-    public double getWidth() {
+    public float getWidth() {
         return width;
     }
 
@@ -19,7 +19,7 @@ public class Rectangle extends Shape implements Comparable<Shape> {
         this.width = width;
     }
 
-    public double getHeight() {
+    public float getHeight() {
         return height;
     }
 
