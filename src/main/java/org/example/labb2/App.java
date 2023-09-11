@@ -33,7 +33,7 @@ public class App {
         Shape rect1 = Shape.create(Rectangle.class, 10, 10);
         Shape circle1 = Shape.create(Circle.class, 5);
 
-        // Create shapes using methods for each class that implements Shape
+        // Create shapes using methods for each class that extends Shape
         Rectangle rect2 = Shape.createRect(2.5f, 3.5f);
         Circle circle2 = Shape.createCircle(10);
     }
