@@ -1,8 +1,7 @@
-package org.example.labb3;
+package org.example.labb3.service;
 
 import org.example.labb3.entities.Product;
 import org.example.labb3.entities.ProductCategory;
-import org.example.labb3.service.Warehouse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -48,15 +47,13 @@ class WarehouseTest {
         Warehouse warehouse = new Warehouse();
 
         assertThrows(RuntimeException.class, () ->
-                warehouse.addNewProduct("", ProductCategory.BOOKS, -1));
+                warehouse.addNewProduct("Product", ProductCategory.BOOKS, -1));
         assertThrows(RuntimeException.class, () ->
                 warehouse.addNewProduct("Product", ProductCategory.BOOKS, 11));
     }
 
     @Test
     void Should_ReturnAllProducts() {
-        Product mockProduct1 = new Product("1", "Product1", ProductCategory.BOOKS, 5, now, now);
-        Product mockProduct2 = new Product("2", "Product2", ProductCategory.BOOKS, 5, now, now);
         Warehouse warehouse = new Warehouse(List.of(
                 new Product("1", "Product1", ProductCategory.BOOKS, 5, now, now),
                 new Product("2", "Product2", ProductCategory.BOOKS, 5, now, now)
