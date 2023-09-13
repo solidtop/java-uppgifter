@@ -82,7 +82,7 @@ class WarehouseTest {
         Product mockProduct = new Product("1", "Product", ProductCategory.BOOKS, 5, now, now);
         Warehouse warehouse = new Warehouse(List.of(mockProduct));
 
-        Optional<Product> productOptional = warehouse.getProductById("1");
+        Optional<Product> productOptional = warehouse.getProductById(mockProduct.id());
 
         assertTrue(productOptional.isPresent());
         assertEquals(mockProduct, productOptional.get());
@@ -95,63 +95,6 @@ class WarehouseTest {
         Optional<Product> productOptional = warehouse.getProductById("1");
 
         assertTrue(productOptional.isEmpty());
-    }
-
-    @Test
-    void Should_UpdateProductUpdatedAt() {
-        LocalDateTime createdAt = now.minusMinutes(1);
-        Warehouse warehouse = new Warehouse(Arrays.asList(
-                new Product("1", "Product1", ProductCategory.BOOKS, 2, createdAt, createdAt),
-                new Product("2", "Product2", ProductCategory.BOOKS, 2, createdAt, createdAt),
-                new Product("3", "Product3", ProductCategory.BOOKS, 2, createdAt, createdAt),
-                new Product("4", "Product4", ProductCategory.BOOKS, 2, createdAt, createdAt)
-        ), fixedClock);
-
-        Product updatedProduct1 = warehouse.updateProduct("1", "UpdatedProduct");
-        Product updatedProduct2 = warehouse.updateProduct("2", ProductCategory.VIDEO_GAMES);
-        Product updatedProduct3 = warehouse.updateProduct("3", 5);
-        Product updatedProduct4 = warehouse.updateProduct("4", "UpdatedProduct", ProductCategory.VIDEO_GAMES, 5);
-
-        assertTrue(updatedProduct1.updatedAt().isAfter(createdAt));
-        assertTrue(updatedProduct2.updatedAt().isAfter(createdAt));
-        assertTrue(updatedProduct3.updatedAt().isAfter(createdAt));
-        assertTrue(updatedProduct4.updatedAt().isAfter(createdAt));
-    }
-
-    @Test
-    void Should_UpdateProductName() {
-        Product mockProduct = new Product("1", "Product", ProductCategory.BOOKS, 2, now, now);
-        Warehouse warehouse = new Warehouse(Arrays.asList(mockProduct));
-
-        Product updatedProduct = warehouse.updateProduct(mockProduct.id(), "UpdatedProduct");
-
-        String expected = "UpdatedProduct";
-        String actual = updatedProduct.name();
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void Should_UpdateProductCategory() {
-        Product mockProduct = new Product("1", "Product", ProductCategory.BOOKS, 2, now, now);
-        Warehouse warehouse = new Warehouse(Arrays.asList(mockProduct));
-
-        Product updatedProduct = warehouse.updateProduct(mockProduct.id(), ProductCategory.MUSIC);
-
-        ProductCategory expected = ProductCategory.MUSIC;
-        ProductCategory actual = updatedProduct.category();
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void Should_UpdateProductRating() {
-        Product mockProduct = new Product("1", "Product", ProductCategory.BOOKS, 2, now, now);
-        Warehouse warehouse = new Warehouse(Arrays.asList(mockProduct));
-
-        Product updatedProduct = warehouse.updateProduct(mockProduct.id(), 5);
-
-        int expected = 5;
-        int actual = updatedProduct.rating();
-        assertEquals(expected, actual);
     }
 
     @Test
@@ -174,13 +117,13 @@ class WarehouseTest {
         Warehouse warehouse = new Warehouse(Arrays.asList(mockProduct));
 
         assertThrows(RuntimeException.class, () ->
-                warehouse.updateProduct("abc", "UpdatedProduct", ProductCategory.BOOKS, 5));
+                warehouse.updateProduct("abc", "UpdatedProduct", ProductCategory.MUSIC, 2));
         assertThrows(RuntimeException.class, () ->
-                warehouse.updateProduct(mockProduct.id(), "", ProductCategory.BOOKS, 5));
+                warehouse.updateProduct(mockProduct.id(), "", ProductCategory.MUSIC, 2));
         assertThrows(RuntimeException.class, () ->
-                warehouse.updateProduct(mockProduct.id(), "UpdatedProduct", ProductCategory.BOOKS, -1));
+                warehouse.updateProduct(mockProduct.id(), "UpdatedProduct", ProductCategory.MUSIC, -1));
         assertThrows(RuntimeException.class, () ->
-                warehouse.updateProduct(mockProduct.id(), "UpdatedProduct", ProductCategory.BOOKS, 11));
+                warehouse.updateProduct(mockProduct.id(), "UpdatedProduct", ProductCategory.MUSIC, 11));
     }
 
     @Test

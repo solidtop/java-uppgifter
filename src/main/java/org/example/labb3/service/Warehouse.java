@@ -46,38 +46,6 @@ public class Warehouse {
         return product;
     }
 
-
-    public Product updateProduct(String productId, String name) {
-        validateName(name);
-
-        Product product = getProductByIdThrows(productId);
-        LocalDateTime updatedAt = LocalDateTime.now(clock);
-        Product updatedProduct = new Product(productId, name, product.category(), product.rating(), product.createdAt(), updatedAt);
-        int index = products.indexOf(product);
-        products.set(index, updatedProduct);
-        return updatedProduct;
-    }
-
-    public Product updateProduct(String productId, ProductCategory category) {
-        Product product = getProductByIdThrows(productId);
-        LocalDateTime updatedAt = LocalDateTime.now(clock);
-        Product updatedProduct = new Product(productId, product.name(), category, product.rating(), product.createdAt(), updatedAt);
-        int index = products.indexOf(product);
-        products.set(index, updatedProduct);
-        return updatedProduct;
-    }
-
-    public Product updateProduct(String productId, int rating) {
-        validateRating(rating);
-
-        Product product = getProductByIdThrows(productId);
-        LocalDateTime updatedAt = LocalDateTime.now(clock);
-        Product updatedProduct = new Product(productId, product.name(), product.category(), rating, product.createdAt(), updatedAt);
-        int index = products.indexOf(product);
-        products.set(index, updatedProduct);
-        return updatedProduct;
-    }
-
     public Product updateProduct(String productId, String name, ProductCategory category, int rating) {
         validateName(name);
         validateRating(rating);
