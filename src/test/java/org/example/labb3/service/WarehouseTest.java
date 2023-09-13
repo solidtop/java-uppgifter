@@ -98,7 +98,64 @@ class WarehouseTest {
     }
 
     @Test
-    void Should_UpdateProductDetails() {
+    void Should_UpdateProductUpdatedAt() {
+        LocalDateTime createdAt = now.minusMinutes(1);
+        Warehouse warehouse = new Warehouse(Arrays.asList(
+                new Product("1", "Product1", ProductCategory.BOOKS, 2, createdAt, createdAt),
+                new Product("2", "Product2", ProductCategory.BOOKS, 2, createdAt, createdAt),
+                new Product("3", "Product3", ProductCategory.BOOKS, 2, createdAt, createdAt),
+                new Product("4", "Product4", ProductCategory.BOOKS, 2, createdAt, createdAt)
+        ), fixedClock);
+
+        Product updatedProduct1 = warehouse.updateProduct("1", "UpdatedProduct");
+        Product updatedProduct2 = warehouse.updateProduct("2", ProductCategory.VIDEO_GAMES);
+        Product updatedProduct3 = warehouse.updateProduct("3", 5);
+        Product updatedProduct4 = warehouse.updateProduct("4", "UpdatedProduct", ProductCategory.VIDEO_GAMES, 5);
+
+        assertTrue(updatedProduct1.updatedAt().isAfter(createdAt));
+        assertTrue(updatedProduct2.updatedAt().isAfter(createdAt));
+        assertTrue(updatedProduct3.updatedAt().isAfter(createdAt));
+        assertTrue(updatedProduct4.updatedAt().isAfter(createdAt));
+    }
+
+    @Test
+    void Should_UpdateProductName() {
+        Product mockProduct = new Product("1", "Product", ProductCategory.BOOKS, 2, now, now);
+        Warehouse warehouse = new Warehouse(Arrays.asList(mockProduct));
+
+        Product updatedProduct = warehouse.updateProduct(mockProduct.id(), "UpdatedProduct");
+
+        String expected = "UpdatedProduct";
+        String actual = updatedProduct.name();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void Should_UpdateProductCategory() {
+        Product mockProduct = new Product("1", "Product", ProductCategory.BOOKS, 2, now, now);
+        Warehouse warehouse = new Warehouse(Arrays.asList(mockProduct));
+
+        Product updatedProduct = warehouse.updateProduct(mockProduct.id(), ProductCategory.MUSIC);
+
+        ProductCategory expected = ProductCategory.MUSIC;
+        ProductCategory actual = updatedProduct.category();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void Should_UpdateProductRating() {
+        Product mockProduct = new Product("1", "Product", ProductCategory.BOOKS, 2, now, now);
+        Warehouse warehouse = new Warehouse(Arrays.asList(mockProduct));
+
+        Product updatedProduct = warehouse.updateProduct(mockProduct.id(), 5);
+
+        int expected = 5;
+        int actual = updatedProduct.rating();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void Should_UpdateAllProductDetails() {
         LocalDateTime createdAt = now.minusMinutes(1);
         Product mockProduct = new Product("1", "Product", ProductCategory.BOOKS, 2, createdAt, createdAt);
         Warehouse warehouse = new Warehouse(Arrays.asList(mockProduct), fixedClock);

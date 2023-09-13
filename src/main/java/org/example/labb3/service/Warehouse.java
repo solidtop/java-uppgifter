@@ -2,6 +2,7 @@ package org.example.labb3.service;
 
 import org.example.labb3.entities.Product;
 import org.example.labb3.entities.ProductCategory;
+import org.example.labb3.entities.Products;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -34,7 +35,8 @@ public class Warehouse {
     }
 
     public Product addNewProduct(String name, ProductCategory category, int rating) {
-        validateProduct(name, rating);
+        validateName(name);
+        validateRating(rating);
 
         String id = generateId();
         LocalDateTime createdAt = LocalDateTime.now(clock);
@@ -44,15 +46,43 @@ public class Warehouse {
         return product;
     }
 
+
+    public Product updateProduct(String productId, String name) {
+        validateName(name);
+
+        Product product = getProductByIdThrows(productId);
+        LocalDateTime updatedAt = LocalDateTime.now(clock);
+        Product updatedProduct = new Product(productId, name, product.category(), product.rating(), product.createdAt(), updatedAt);
+        int index = products.indexOf(product);
+        products.set(index, updatedProduct);
+        return updatedProduct;
+    }
+
+    public Product updateProduct(String productId, ProductCategory category) {
+        Product product = getProductByIdThrows(productId);
+        LocalDateTime updatedAt = LocalDateTime.now(clock);
+        Product updatedProduct = new Product(productId, product.name(), category, product.rating(), product.createdAt(), updatedAt);
+        int index = products.indexOf(product);
+        products.set(index, updatedProduct);
+        return updatedProduct;
+    }
+
+    public Product updateProduct(String productId, int rating) {
+        validateRating(rating);
+
+        Product product = getProductByIdThrows(productId);
+        LocalDateTime updatedAt = LocalDateTime.now(clock);
+        Product updatedProduct = new Product(productId, product.name(), product.category(), rating, product.createdAt(), updatedAt);
+        int index = products.indexOf(product);
+        products.set(index, updatedProduct);
+        return updatedProduct;
+    }
+
     public Product updateProduct(String productId, String name, ProductCategory category, int rating) {
-        validateProduct(name, rating);
+        validateName(name);
+        validateRating(rating);
 
-        Optional<Product> productOptional = getProductById(productId);
-        if (productOptional.isEmpty()) {
-            throw new NoSuchElementException("Product not found");
-        }
-
-        Product product = productOptional.get();
+        Product product = getProductByIdThrows(productId);
         LocalDateTime updatedAt = LocalDateTime.now(clock);
         Product updatedProduct = new Product(productId, name, category, rating, product.createdAt(), updatedAt);
         int index = products.indexOf(product);
@@ -108,7 +138,7 @@ public class Warehouse {
 
         return products.stream()
                 .filter(product -> product.createdAt().getMonthValue() >= currentMonth)
-                .filter(product -> product.rating() == Product.MAX_RATING)
+                .filter(product -> product.rating() == Products.MAX_RATING)
                 .sorted(Comparator.comparing(Product::createdAt))
                 .toList();
     }
@@ -125,13 +155,18 @@ public class Warehouse {
         return UUID.randomUUID().toString();
     }
 
-    private void validateProduct(String name, int rating) {
-        if (name.isEmpty()) {
+    private void validateName(String name) throws IllegalArgumentException {
+        if (name.isEmpty())
             throw new IllegalArgumentException("Name cannot be empty");
-        }
+    }
 
-        if (rating < Product.MIN_RATING || rating > Product.MAX_RATING) {
-            throw new IllegalArgumentException("Rating must be between " + Product.MIN_RATING + " and " + Product.MAX_RATING);
-        }
+    private void validateRating(int rating) throws IllegalArgumentException {
+        if (rating < Products.MIN_RATING || rating > Products.MAX_RATING)
+            throw new IllegalArgumentException("Rating must be between " + Products.MIN_RATING + " and " + Products.MAX_RATING);
+    }
+
+    private Product getProductByIdThrows(String productId) throws NoSuchElementException {
+        Optional<Product> productOptional = getProductById(productId);
+        return productOptional.orElseThrow(() -> new NoSuchElementException("Product not found"));
     }
 }
