@@ -11,11 +11,12 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class WarehouseTest {
-    private final Clock fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
+    private Clock fixedClock;
     private LocalDateTime now;
 
     @BeforeEach
     void setUp() {
+        fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
         now = LocalDateTime.now(fixedClock);
     }
 
@@ -38,7 +39,7 @@ class WarehouseTest {
     void Should_ThrowException_IfNameIsEmpty() {
         Warehouse warehouse = new Warehouse();
 
-        assertThrows(RuntimeException.class, () ->
+        assertThrows(IllegalArgumentException.class, () ->
                 warehouse.addNewProduct("", ProductCategory.BOOKS, 5));
     }
 
@@ -46,9 +47,9 @@ class WarehouseTest {
     void Should_ThrowException_IfRatingIsInvalid() {
         Warehouse warehouse = new Warehouse();
 
-        assertThrows(RuntimeException.class, () ->
+        assertThrows(IllegalArgumentException.class, () ->
                 warehouse.addNewProduct("Product", ProductCategory.BOOKS, -1));
-        assertThrows(RuntimeException.class, () ->
+        assertThrows(IllegalArgumentException.class, () ->
                 warehouse.addNewProduct("Product", ProductCategory.BOOKS, 11));
     }
 
@@ -62,17 +63,6 @@ class WarehouseTest {
         List<Product> products = warehouse.getAllProducts();
 
         int expected = 2;
-        int actual = products.size();
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void Should_ReturnEmptyList_When_NoProductsExists() {
-        Warehouse warehouse = new Warehouse();
-
-        List<Product> products = warehouse.getAllProducts();
-
-        int expected = 0;
         int actual = products.size();
         assertEquals(expected, actual);
     }
@@ -116,22 +106,22 @@ class WarehouseTest {
         Product mockProduct = new Product("1", "Product", ProductCategory.BOOKS, 5, now, now);
         Warehouse warehouse = new Warehouse(Arrays.asList(mockProduct));
 
-        assertThrows(RuntimeException.class, () ->
+        assertThrows(NoSuchElementException.class, () ->
                 warehouse.updateProduct("abc", "UpdatedProduct", ProductCategory.MUSIC, 2));
-        assertThrows(RuntimeException.class, () ->
+        assertThrows(IllegalArgumentException.class, () ->
                 warehouse.updateProduct(mockProduct.id(), "", ProductCategory.MUSIC, 2));
-        assertThrows(RuntimeException.class, () ->
+        assertThrows(IllegalArgumentException.class, () ->
                 warehouse.updateProduct(mockProduct.id(), "UpdatedProduct", ProductCategory.MUSIC, -1));
-        assertThrows(RuntimeException.class, () ->
+        assertThrows(IllegalArgumentException.class, () ->
                 warehouse.updateProduct(mockProduct.id(), "UpdatedProduct", ProductCategory.MUSIC, 11));
     }
 
     @Test
-    void Should_ReturnProductsInCategory() {
+    void Should_ReturnProductsInCategorySortedByAlphabeticalOrder() {
         Warehouse warehouse = new Warehouse(List.of(
-                new Product("1", "Product1", ProductCategory.BOOKS, 5, now, now),
-                new Product("2", "Product2", ProductCategory.MUSIC, 6, now, now),
-                new Product("3", "Product3", ProductCategory.BOOKS, 8, now, now)
+                new Product("1", "DFG", ProductCategory.BOOKS, 5, now, now),
+                new Product("2", "HIJ", ProductCategory.MUSIC, 6, now, now),
+                new Product("3", "ABC", ProductCategory.BOOKS, 8, now, now)
         ));
 
         List<Product> booksProducts = warehouse.getProductsByCategory(ProductCategory.BOOKS);
@@ -139,6 +129,7 @@ class WarehouseTest {
         int expected = 2;
         int actual = booksProducts.size();
         assertEquals(expected, actual);
+        assertEquals('A', booksProducts.get(0).name().charAt(0));
     }
 
     @Test
@@ -149,7 +140,7 @@ class WarehouseTest {
                 new Product("3", "Product3", ProductCategory.BOOKS, 8, now, now)
         ));
 
-        LocalDate specifiedDate = LocalDate.of(2023, 9, 9);
+        LocalDate specifiedDate = now.toLocalDate().minusDays(3);
         List<Product> products = warehouse.getProductsSince(specifiedDate);
 
         int expected = 2;
@@ -202,11 +193,11 @@ class WarehouseTest {
     }
 
     @Test
-    void Should_ReturnProductsWithMaxRatingThisMonth() {
+    void Should_ReturnProductsWithMaxRatingThisMonthSortedByNewest() {
         Warehouse warehouse = new Warehouse(List.of(
                 new Product("1", "Product1", ProductCategory.BOOKS, 10, now.minusMonths(1), now.minusMonths(1)),
-                new Product("2", "Product2", ProductCategory.BOOKS, 10, now, now),
-                new Product("3", "Product3", ProductCategory.BOOKS, 10, now, now),
+                new Product("2", "Product2", ProductCategory.BOOKS, 10, now.minusMinutes(2), now.minusMinutes(2)),
+                new Product("3", "Product3", ProductCategory.BOOKS, 10, now.minusMinutes(1), now.minusMinutes(1)),
                 new Product("4", "Product4", ProductCategory.BOOKS, 9, now, now)
         ));
 
@@ -215,6 +206,8 @@ class WarehouseTest {
         int expected = 2;
         int actual = products.size();
         assertEquals(expected, actual);
+        boolean condition = products.get(0).createdAt().isAfter(products.get(1).createdAt());
+        assertTrue(condition);
     }
 
     @Test
@@ -230,5 +223,27 @@ class WarehouseTest {
         int expected = 2;
         int actual = productMap.size();
         assertEquals(expected, actual);
+        assertEquals(2L, productMap.get('A'));
+    }
+
+    @Test
+    void Should_ReturnEmptyResult_When_NoProductsFound() {
+        Warehouse warehouse = new Warehouse();
+
+        List<Product> allProducts = warehouse.getAllProducts();
+        List<Product> booksProducts = warehouse.getProductsByCategory(ProductCategory.BOOKS);
+        List<Product> productsSince = warehouse.getProductsSince(now.toLocalDate());
+        List<Product> modifiedProducts = warehouse.getModifiedProducts();
+        Set<ProductCategory> categories = warehouse.getCategoriesWithProducts();
+        List<Product> topRatedProducts = warehouse.getTopRatedProductsThisMonth();
+        Map<Character, Long> productMap = warehouse.getProductCountByFirstLetter();
+
+        assertTrue(allProducts.isEmpty());
+        assertTrue(booksProducts.isEmpty());
+        assertTrue(productsSince.isEmpty());
+        assertTrue(modifiedProducts.isEmpty());
+        assertTrue(categories.isEmpty());
+        assertTrue(topRatedProducts.isEmpty());
+        assertTrue(productMap.isEmpty());
     }
 }

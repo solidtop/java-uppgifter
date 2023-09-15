@@ -83,7 +83,7 @@ public class Warehouse {
 
     public List<Product> getModifiedProducts() {
         return products.stream()
-                .filter(product -> product.createdAt().isBefore(product.updatedAt()))
+                .filter(product -> product.updatedAt().isAfter(product.createdAt()))
                 .toList();
     }
 
@@ -107,7 +107,7 @@ public class Warehouse {
         return products.stream()
                 .filter(product -> product.createdAt().getMonthValue() >= currentMonth)
                 .filter(product -> product.rating() == Products.MAX_RATING)
-                .sorted(Comparator.comparing(Product::createdAt))
+                .sorted(Comparator.comparing(Product::createdAt).reversed())
                 .toList();
     }
 
@@ -123,17 +123,17 @@ public class Warehouse {
         return UUID.randomUUID().toString();
     }
 
-    private void validateName(String name) throws IllegalArgumentException {
+    private void validateName(String name) {
         if (name.isEmpty())
             throw new IllegalArgumentException("Name cannot be empty");
     }
 
-    private void validateRating(int rating) throws IllegalArgumentException {
+    private void validateRating(int rating) {
         if (rating < Products.MIN_RATING || rating > Products.MAX_RATING)
             throw new IllegalArgumentException("Rating must be between " + Products.MIN_RATING + " and " + Products.MAX_RATING);
     }
 
-    private Product getProductByIdThrows(String productId) throws NoSuchElementException {
+    private Product getProductByIdThrows(String productId) {
         Optional<Product> productOptional = getProductById(productId);
         return productOptional.orElseThrow(() -> new NoSuchElementException("Product not found"));
     }
