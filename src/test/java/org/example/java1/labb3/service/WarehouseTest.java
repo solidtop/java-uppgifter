@@ -1,4 +1,4 @@
-package org.example.labb3.java1.service;
+package org.example.java1.labb3.service;
 
 import org.example.java1.labb3.entities.Product;
 import org.example.java1.labb3.entities.ProductCategory;
