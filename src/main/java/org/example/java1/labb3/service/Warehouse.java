@@ -1,8 +1,8 @@
-package org.example.labb3.service;
+package org.example.java1.labb3.service;
 
-import org.example.labb3.entities.Product;
-import org.example.labb3.entities.ProductCategory;
-import org.example.labb3.entities.Products;
+import org.example.java1.labb3.entities.Product;
+import org.example.java1.labb3.entities.Products;
+import org.example.java1.labb3.entities.ProductCategory;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -46,13 +46,33 @@ public class Warehouse {
         return product;
     }
 
+    public Product updateProduct(String productId, String name) {
+        validateName(name);
+        Product product = getProductByIdThrows(productId);
+        return updateProduct(product, name, product.category(), product.rating());
+    }
+
+    public Product updateProduct(String productId, ProductCategory category) {
+        Product product = getProductByIdThrows(productId);
+        return updateProduct(product, product.name(), category, product.rating());
+    }
+
+    public Product updateProduct(String productId, int rating) {
+        validateRating(rating);
+        Product product = getProductByIdThrows(productId);
+        return updateProduct(product, product.name(), product.category(), rating);
+    }
+
     public Product updateProduct(String productId, String name, ProductCategory category, int rating) {
         validateName(name);
         validateRating(rating);
-
         Product product = getProductByIdThrows(productId);
+        return updateProduct(product, name, category, rating);
+    }
+
+    private Product updateProduct(Product product, String name, ProductCategory category, int rating) {
         LocalDateTime updatedAt = LocalDateTime.now(clock);
-        Product updatedProduct = new Product(productId, name, category, rating, product.createdAt(), updatedAt);
+        Product updatedProduct = new Product(product.id(), name, category, rating, product.createdAt(), updatedAt);
         int index = products.indexOf(product);
         products.set(index, updatedProduct);
         return updatedProduct;

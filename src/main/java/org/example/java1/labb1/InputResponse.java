@@ -1,4 +1,4 @@
-package org.example.labb1;
+package org.example.java1.labb1;
 
 public class InputResponse {
     private final Status status;

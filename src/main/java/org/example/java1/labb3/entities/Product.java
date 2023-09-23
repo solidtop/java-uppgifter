@@ -1,4 +1,4 @@
-package org.example.labb3.entities;
+package org.example.java1.labb3.entities;
 
 import java.time.LocalDateTime;
 

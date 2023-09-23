@@ -1,4 +1,4 @@
-package org.example.labb1;
+package org.example.java1.labb1;
 
 public class Utils {
     public static final String ANSI_YELLOW = "\u001B[33m";

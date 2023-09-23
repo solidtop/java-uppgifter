@@ -1,4 +1,4 @@
-package org.example.labb3.entities;
+package org.example.java1.labb3.entities;
 
 public abstract class Products {
     public static final int MIN_RATING = 0;

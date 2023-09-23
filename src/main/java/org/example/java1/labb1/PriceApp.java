@@ -1,4 +1,4 @@
-package org.example.labb1;
+package org.example.java1.labb1;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
@@ -25,7 +25,7 @@ public class PriceApp {
     }
 
     public void run() {
-        while(true) {
+        while (true) {
             printOptions();
             System.out.print("Välj: ");
             String input = scanner.nextLine();

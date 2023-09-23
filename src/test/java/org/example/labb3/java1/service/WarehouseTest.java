@@ -1,7 +1,8 @@
-package org.example.labb3.service;
+package org.example.labb3.java1.service;
 
-import org.example.labb3.entities.Product;
-import org.example.labb3.entities.ProductCategory;
+import org.example.java1.labb3.entities.Product;
+import org.example.java1.labb3.entities.ProductCategory;
+import org.example.java1.labb3.service.Warehouse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,11 +14,18 @@ import static org.junit.jupiter.api.Assertions.*;
 class WarehouseTest {
     private Clock fixedClock;
     private LocalDateTime now;
+    private Product mockProduct;
+    private List<Product> mockProducts;
 
     @BeforeEach
     void setUp() {
         fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
         now = LocalDateTime.now(fixedClock);
+        mockProduct = new Product("1", "Product1", ProductCategory.BOOKS, 0, now, now);
+        mockProducts = new ArrayList<>(Arrays.asList(
+                mockProduct,
+                new Product("2", "Product2", ProductCategory.BOOKS, 0, now, now)
+        ));
     }
 
     @Test
@@ -55,10 +63,7 @@ class WarehouseTest {
 
     @Test
     void Should_ReturnAllProducts() {
-        Warehouse warehouse = new Warehouse(List.of(
-                new Product("1", "Product1", ProductCategory.BOOKS, 5, now, now),
-                new Product("2", "Product2", ProductCategory.BOOKS, 5, now, now)
-        ));
+        Warehouse warehouse = new Warehouse(mockProducts);
 
         List<Product> products = warehouse.getAllProducts();
 
@@ -69,8 +74,7 @@ class WarehouseTest {
 
     @Test
     void Should_ReturnProduct_IfExists() {
-        Product mockProduct = new Product("1", "Product", ProductCategory.BOOKS, 5, now, now);
-        Warehouse warehouse = new Warehouse(List.of(mockProduct));
+        Warehouse warehouse = new Warehouse(mockProducts);
 
         Optional<Product> productOptional = warehouse.getProductById(mockProduct.id());
 
@@ -82,9 +86,42 @@ class WarehouseTest {
     void Should_ReturnEmptyOptional_IfProductNotExists() {
         Warehouse warehouse = new Warehouse();
 
-        Optional<Product> productOptional = warehouse.getProductById("1");
+        Optional<Product> productOptional = warehouse.getProductById(mockProduct.id());
 
         assertTrue(productOptional.isEmpty());
+    }
+
+    @Test
+    void Should_UpdateProductName() {
+        Warehouse warehouse = new Warehouse(mockProducts);
+
+        Product updatedProduct = warehouse.updateProduct(mockProduct.id(), "UpdatedProduct");
+
+        String expected = "UpdatedProduct";
+        String actual = updatedProduct.name();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void Should_UpdateProductCategory() {
+        Warehouse warehouse = new Warehouse(mockProducts);
+
+        Product updatedProduct = warehouse.updateProduct(mockProduct.id(), ProductCategory.MUSIC);
+
+        ProductCategory expected = ProductCategory.MUSIC;
+        ProductCategory actual = updatedProduct.category();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void Should_UpdateProductRating() {
+        Warehouse warehouse = new Warehouse(mockProducts);
+
+        Product updatedProduct = warehouse.updateProduct(mockProduct.id(), 5);
+
+        int expected = 5;
+        int actual = updatedProduct.rating();
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -93,27 +130,26 @@ class WarehouseTest {
         Product mockProduct = new Product("1", "Product", ProductCategory.BOOKS, 2, createdAt, createdAt);
         Warehouse warehouse = new Warehouse(Arrays.asList(mockProduct), fixedClock);
 
-        Product updatedProduct = warehouse.updateProduct(mockProduct.id(), "UpdatedProduct", ProductCategory.VIDEO_GAMES, 5);
+        Product updatedProduct = warehouse.updateProduct(mockProduct.id(), "UpdatedProduct", ProductCategory.VIDEO_GAMES, 10);
 
         assertEquals("UpdatedProduct", updatedProduct.name());
         assertEquals(ProductCategory.VIDEO_GAMES, updatedProduct.category());
-        assertEquals(5, updatedProduct.rating());
+        assertEquals(10, updatedProduct.rating());
         assertTrue(updatedProduct.updatedAt().isAfter(createdAt));
     }
 
     @Test
     void Should_ThrowException_IfInvalidUpdateProductDetails() {
-        Product mockProduct = new Product("1", "Product", ProductCategory.BOOKS, 5, now, now);
-        Warehouse warehouse = new Warehouse(Arrays.asList(mockProduct));
+        Warehouse warehouse = new Warehouse(mockProducts);
 
         assertThrows(NoSuchElementException.class, () ->
-                warehouse.updateProduct("abc", "UpdatedProduct", ProductCategory.MUSIC, 2));
+                warehouse.updateProduct("abc", "UpdatedProduct"));
         assertThrows(IllegalArgumentException.class, () ->
-                warehouse.updateProduct(mockProduct.id(), "", ProductCategory.MUSIC, 2));
+                warehouse.updateProduct(mockProduct.id(), ""));
         assertThrows(IllegalArgumentException.class, () ->
-                warehouse.updateProduct(mockProduct.id(), "UpdatedProduct", ProductCategory.MUSIC, -1));
+                warehouse.updateProduct(mockProduct.id(), -1));
         assertThrows(IllegalArgumentException.class, () ->
-                warehouse.updateProduct(mockProduct.id(), "UpdatedProduct", ProductCategory.MUSIC, 11));
+                warehouse.updateProduct(mockProduct.id(), 11));
     }
 
     @Test

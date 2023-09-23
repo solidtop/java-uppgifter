@@ -1,10 +1,11 @@
-package org.example.labb2;
+package org.example.java1.labb2;
 
 import java.util.Arrays;
 
 public abstract class Shape implements Comparable<Shape> {
 
     public abstract double getArea();
+
     public abstract double getPerimeter();
 
     @Override

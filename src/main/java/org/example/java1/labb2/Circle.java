@@ -1,4 +1,4 @@
-package org.example.labb2;
+package org.example.java1.labb2;
 
 import java.util.Objects;
 
