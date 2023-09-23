@@ -125,7 +125,7 @@ public class Warehouse {
         int currentMonth = today.getMonthValue();
 
         return products.stream()
-                .filter(product -> product.createdAt().getMonthValue() >= currentMonth)
+                .filter(product -> product.createdAt().getMonthValue() == currentMonth)
                 .filter(product -> product.rating() == Products.MAX_RATING)
                 .sorted(Comparator.comparing(Product::createdAt).reversed())
                 .toList();
