@@ -90,14 +90,14 @@ public class Warehouse {
 
     public List<Product> getProductsByCategory(ProductCategory category) {
         return products.stream()
-                .filter(product -> product.category().equals(category))
+                .filter(product -> product.category() == category)
                 .sorted(Comparator.comparing(Product::name))
                 .toList();
     }
 
-    public List<Product> getProductsSince(LocalDate fromDate) {
+    public List<Product> getProductsSince(LocalDate date) {
         return products.stream()
-                .filter(product -> product.createdAt().isAfter(fromDate.atStartOfDay()))
+                .filter(product -> product.createdAt().isAfter(date.atStartOfDay()))
                 .toList();
     }
 

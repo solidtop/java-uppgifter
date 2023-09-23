@@ -22,10 +22,10 @@ class WarehouseTest {
         fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
         now = LocalDateTime.now(fixedClock);
         mockProduct = new Product("1", "Product1", ProductCategory.BOOKS, 0, now, now);
-        mockProducts = new ArrayList<>(Arrays.asList(
+        mockProducts = Arrays.asList(
                 mockProduct,
                 new Product("2", "Product2", ProductCategory.BOOKS, 0, now, now)
-        ));
+        );
     }
 
     @Test
