@@ -11,11 +11,8 @@ public abstract class BaseDiscount implements Discount {
     }
 
     protected abstract boolean isApplicable(Product product, Order order);
-
     protected abstract double calculateDiscount(Product product);
-
     protected abstract String getDiscountDescription();
-
 
     @Override
     public double apply(Product product, Order order) {
