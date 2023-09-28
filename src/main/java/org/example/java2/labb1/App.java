@@ -17,16 +17,16 @@ public class App {
     }
 
     static void printDiscountOnProduct(Discount discountChain, Product product, Order order) {
-        double discountedPrice = product.totalCost() - discountChain.apply(product, order);
+        double discountedPrice = product.totalPrice() - discountChain.apply(product, order);
         String desc = discountChain.getDescription(product, order);
         System.out.println(product.quantity() + "x " + product.name());
         System.out.println("-------------");
         System.out.println("Price: " + product.price() + " SEK");
-        System.out.println("Total Cost: " + product.totalCost() + " SEK");
+        System.out.println("Total Price: " + product.totalPrice() + " SEK");
         System.out.print("Applied Discounts: ");
         if (!desc.isEmpty()) {
             System.out.println(desc);
-            System.out.println("Discounted Price: " + discountedPrice + " SEK");
+            System.out.println("Discounted Total Price: " + discountedPrice + " SEK");
         } else {
             System.out.println("None");
         }

@@ -15,7 +15,7 @@ public class MilkDiscount extends BaseDiscount {
 
     @Override
     protected double calculateDiscount(Product product) {
-        return product.totalCost() * 0.05;
+        return product.totalPrice() * 0.05;
     }
 
     @Override
